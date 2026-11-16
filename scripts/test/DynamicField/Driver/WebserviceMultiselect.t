@@ -201,4 +201,31 @@ $Self->IsDeeply(
     'ValueGet',
 );
 
+# StatsFieldParameterBuild
+{
+    no warnings 'redefine';    ## no critic
+    local *Kernel::System::DynamicField::Driver::BaseWebservice::_HistoricalValueGet = sub {
+        return {};
+    };
+
+    for my $TranslatableValues ( 0, 1 ) {
+        my $StatsFieldParameter = $DynamicFieldBackendObject->StatsFieldParameterBuild(
+            DynamicFieldConfig => {
+                %{$DynamicFieldConfig},
+                Config => {
+                    %{ $DynamicFieldConfig->{Config} },
+                    PossibleValues     => { a => 'A' },
+                    TranslatableValues => $TranslatableValues,
+                },
+            },
+        );
+
+        $Self->Is(
+            $StatsFieldParameter->{TranslatableValues},
+            $TranslatableValues,
+            "StatsFieldParameterBuild - TranslatableValues is $TranslatableValues",
+        );
+    }
+}
+
 1;
